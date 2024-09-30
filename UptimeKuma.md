@@ -215,3 +215,58 @@ To restart the container
 ```
 docker-compose up -d
 ```
+
+#### You can use another method to create Docker Compose file
+
+```
+version: "3.8"
+services:
+  nginx:
+    image: nginx
+    restart: always
+    container_name: nginx
+    volumes:
+       - ./nginx/conf.d/:/etc/nginx/conf.d/
+       - ./nginx/certs/:/etc/nginx/certs/
+    ports:
+     - "80:80"
+     - "443:443"
+    environment:
+     - NGINX_PORT=80
+
+  uptime-kuma:
+    restart: always
+    image: louislam/uptime-kuma:1.23.13
+    container_name: uptime-kuma
+    volumes:
+      - ./uptime-kuma/data:/app/data
+    expose:
+      - "3001"
+```
+
+
+* Docker Compose version
+version version: '3'
+version version: '3.8'
+Versions 3 and 3.8 are both for Docker Compose and work the same for most applications. But higher versions may have newer features. There is no particular difference here and both files work with both versions.
+
+* Nginx service
+In the second file, the Nginx service is added, which is used to provide a web server or reverse proxy. Here the ./nginx/conf.d/ and ./nginx/certs/ directories are linked from the local system into the container for configuration and SSL certificates.
+Ports 80 and 443 are connected to Nginx, which are HTTP and HTTPS ports.
+The first file is only related to Uptime Kuma and does not have a separate web server for traffic management. If you need to use Nginx as a proxy or to manage SSL certificates, your configuration file is very suitable.
+
+* Expose vs. Ports
+The first file: uses ports: "3001:3001". This means that port 3001 of the container is directly connected to port 3001 on the host (server) and is used for external access (e.g. browser).
+The second file: you use expose: "3001" which makes port 3001 available only for internal communication between containers and it cannot be accessed from outside (like a browser) unless you use Nginx to direct traffic to it.
+
+* Volumes
+In both files, volumes are used to store data, but in the second file, special paths for Nginx are also added to get Nginx settings and SSL certificates from local files.
+
+* Environment
+The second file defines the NGINX_PORT=80 environment variable for Nginx, which specifies the default HTTP port. In Kuma's Uptime settings, there is no need for a special environment variable in the file, so there is no difference in this section.
+
+* Result
+The second file is suitable for the scenario where you need an Nginx web server and want to run Uptime Kuma behind a reverse proxy (for example, for SSL or using HTTPS).
+The first file is only suitable for running Uptime Kuma directly through port 3001 without the need for a web server proxy or SSL.
+If your goal is to have a layer of security with SSL and use Nginx as a proxy, the second file is completely more suitable.
+
