@@ -41,6 +41,22 @@ docker-compose --version
 
 ### Steps to install Uptime Kuma with Docker
 
+#### Installation prerequisites
+
+```
+sudo apt install apt-transport-https ca-certificates curl software-properties-common
+```
+#### Add GPG Docker key:
+
+```
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+```
+
+#### Add a Docker repository
+
+
+
+
 1. Running Uptime Kuma Container: Docker is a fast and simple way to install Uptime Kuma. You can run Uptime Kuma in a Docker container by running the following command
 
 ```
@@ -111,6 +127,48 @@ docker rm uptime-kuma
 
 If you have Docker Compose installed, you can use the docker-compose.yml file to start Uptime Kuma.
 
+1. System update
+
+```
+sudo apt update && sudo apt upgrade -y
+```
+
+2. Install Docker and Docker Compose
+
+```
+sudo apt install apt-transport-https ca-certificates curl software-properties-common
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+sudo apt update
+sudo apt install docker-ce docker-ce-cli containerd.io
+```
+* Check Docker installation
+```
+docker --version
+```
+
+* Install Docker Compose
+
+```
+sudo curl -L "https://github.com/docker/compose/releases/download/v2.21.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+```
+* Docker Compose installation review 
+
+```
+docker-compose --version
+```
+3. Create Docker Compose file for Uptime Kuma
+
+* Create a directory for Uptime Kuma
+
+```
+mkdir ~/uptime-kuma
+cd ~/uptime-kuma
+```
+
+To install the latest version of Docker Compose, run the following command
+
 * Create the docker-compose.yml file:
 Save the following file in a directory like /opt/uptime-kuma
 
@@ -127,7 +185,32 @@ services:
       - ./data:/app/data
 ```
 
-* Running Kuma Uptime with Docker Compose:
+4. Running Kuma Uptime with Docker Compose:
+
+```
+docker-compose up -d
+```
+This command will run the Kuma Uptime container in the background.
+
+5. Access to Uptime Kuma
+Now you can access Uptime Kuma through the browser. The address will look like this (according to the server IP)
+
+```
+http://[your-server-ip]:3001
+```
+6. Kuma Uptime Management
+
+* Container stop
+
+To stop the container
+
+```
+docker-compose down
+```
+
+* Restart the container
+
+To restart the container
 
 ```
 docker-compose up -d
